@@ -43,6 +43,7 @@ class TasksController extends Controller
     public function create()
     {
         $task = new Task;
+        $task->user_id = \Auth::id();
         
         // タスク作成ビューを表示
         return view('tasks.create', [
@@ -138,7 +139,7 @@ class TasksController extends Controller
         // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
         // タスクを更新
-        $task->user_id = $request->user_id;
+        $task->user_id =\Auth::id();
         $task->status = $request->status;    // 追加
         $task->content = $request->content;
         $task->save();
