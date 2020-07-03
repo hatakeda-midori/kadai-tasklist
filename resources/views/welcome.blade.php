@@ -3,6 +3,7 @@
 @section('content')
     @if (Auth::check())
         {{ Auth::user()->name }}
+        {{ Auth::user()->name }}
         @include('tasks.index')
         
     @else
