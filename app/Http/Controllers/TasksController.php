@@ -23,7 +23,7 @@ class TasksController extends Controller
         // 認証済みユーザを取得
         $user = \Auth::user();
         // タスク一覧を取得
-        $tasks = $user->tasks()->orderBy('created_at' , 'desc')->paginate(10);
+        $tasks = \Auth::user()->tasks()->orderBy('created_at' , 'desc')->paginate(10);
         
         $data = [
             'user' => $user,
@@ -31,7 +31,10 @@ class TasksController extends Controller
             ];
         }
         // タスク一覧ビューでそれを表示
-        return view('welcome', $data);
+        return view('welcome', $data 
+            );
+            
+        
     }
     /**
      * Show the form for creating a new resource.
@@ -44,11 +47,8 @@ class TasksController extends Controller
     {
         $task = new Task;
         $task->user_id = \Auth::id();
-        
         // タスク作成ビューを表示
-        return view('tasks.create', [
-            'task' => $task,
-            ]);
+        return view('tasks.create');
     }
 
     /**
@@ -127,7 +127,7 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      
-    // putまたはpatchでmessages/idにアクセスされた場合の「更新処理」
+    // putまたはpatchでtasks/idにアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
     {
         // バリデーション
@@ -159,10 +159,12 @@ class TasksController extends Controller
     {
         //idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
+        if (\Auth::id() === $task->user_id) {
         // タスクを削除
         $task->delete();
 
         // トップページへリダイレクトさせる
         return redirect('/'); 
     }
+}
 }
