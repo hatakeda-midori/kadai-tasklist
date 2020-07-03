@@ -157,8 +157,8 @@ class TasksController extends Controller
     // deleteでtask/idにアクセスされた場合の「削除処理」 
     public function destroy($id)
     {
-        //idの値でタスクを検索して取得
-        $task = Task::findOrFail($id);
+       // idの値で投稿を検索して取得
+        $task = \App\Task::findOrFail($id);
         if (\Auth::id() === $task->user_id) {
         // タスクを削除
         $task->delete();
