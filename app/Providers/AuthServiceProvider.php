@@ -1,5 +1,7 @@
 <?php
 
+use App\Task; // 追加
+use App\Policies\TaskPolicy; // 追加
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -13,8 +15,11 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
+         'App\Task' => 'App\Policies\TaskPolicy',// 追加
         // 'App\Model' => 'App\Policies\ModelPolicy',
     ];
+    
+    
 
     /**
      * Register any authentication / authorization services.

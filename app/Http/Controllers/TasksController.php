@@ -26,7 +26,7 @@ class TasksController extends Controller
         $tasks = \Auth::user()->tasks()->orderBy('created_at' , 'desc')->paginate(10);
         
         $data = [
-            'user' => $user,
+            'user_id' => $user->id,
             'tasks' => $tasks,
             ];
         }
@@ -45,12 +45,17 @@ class TasksController extends Controller
     // getでtasks/createにアクセスされた場合の「新規登録画面表示処理」
     public function create()
     {
+        if (\Auth::check()) { // 認証済みの場合
+        
         $task = new Task;
         $task->user_id = \Auth::id();
         // タスク作成ビューを表示
         return view('tasks.create');
     }
-
+    
+    return redirect('/');
+    
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -88,18 +93,27 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      
-    // getでmessages/idにアクセスされた場合の「取得表示処理」
+    // getでtasks/idにアクセスされた場合の「取得表示処理」
     public function show($id)
     {
         //idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
+        if(\Auth::id() == $task->user_id){
+        //$this->authorize('view', $task); // policy追加
 
+    // if (\Auth::check()) { // 認証済みの場合
+    
+        
         // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'task' => $task,
         ]);
-    }
-
+        
+        }    
+            
+    return redirect('/');
+    
+}
     /**
      * Show the form for editing the specified resource.
      *
@@ -107,18 +121,25 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      
-    // getでmessages/id/editにアクセスされた場合の「更新画面表示処理」
+    // getでtasks/id/editにアクセスされた場合の「更新画面表示処理」
     public function edit($id)
     {
         // idの値でタスクを検索して取得
-        $task = Task::findOrFail($id);
+         $task = Task::findOrFail($id);
+
+        //if (\Auth::check()) { // 認証済みの場合
+        if(\Auth::id() == $task->user_id){
 
         // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
         ]);
+    }else{
+    
+    return redirect('/');
+    
     }
-
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -130,7 +151,7 @@ class TasksController extends Controller
     // putまたはpatchでtasks/idにアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
     {
-        // バリデーション
+        // バリデーション 
         $request->validate([
             'status' => 'required|max:10',
             'content' => 'required|max:255',
@@ -162,9 +183,9 @@ class TasksController extends Controller
         if (\Auth::id() === $task->user_id) {
         // タスクを削除
         $task->delete();
-
+        }
         // トップページへリダイレクトさせる
         return redirect('/'); 
-    }
+    
 }
 }
